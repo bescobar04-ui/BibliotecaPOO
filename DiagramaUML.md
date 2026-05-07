@@ -1,39 +1,74 @@
 @startuml
-skinparam classAttributeIconSize 0
+skinparam style strictuml
+skinparam packageStyle rectangle
+
+title Diagrama de Clases: Sistema Biblioteca POO (Arquitectura MVC)
 
 package "app" {
-    class Main
+    class Main {
+        + main(args: String[])
+    }
 }
 
 package "vista" {
-    class BibliotecaVista
+    class BibliotecaVista {
+        + mostrarMenu()
+        + mostrarMensaje(msj: String)
+        + leerEntrada(): String
+    }
 }
 
 package "controlador" {
-    class BibliotecaController
+    class BibliotecaController {
+        - vista: BibliotecaVista
+        - modelo: Biblioteca
+        + iniciar()
+        + procesarAccion(opcion: int)
+    }
 }
 
 package "modelo" {
-    class Biblioteca
-    class Libro
-    class Usuario
-    class Prestamo
-    class BibliotecaException
+    class Biblioteca {
+        - libros: List<Libro>
+        - usuarios: List<Usuario>
+        + agregarLibro(l: Libro)
+        + registrarUsuario(u: Usuario)
+        + realizarPrestamo(u: Usuario, l: Libro)
+    }
+
+    class Libro {
+        - titulo: String
+        - autor: String
+        - disponible: boolean
+    }
+
+    class Usuario {
+        - nombre: String
+        - correo: String
+        + validarCorreo(): boolean
+    }
+
+    class Prestamo {
+        - fecha: Date
+        - usuario: Usuario
+        - libro: Libro
+    }
+
+    class BibliotecaException {
+        <<Exception>>
+        + BibliotecaException(msj: String)
+    }
 }
 
-Main ..> BibliotecaVista : "crea >"
-Main ..> BibliotecaController : "crea >"
-
-BibliotecaVista --> "1" BibliotecaController : "-controller"
-
-BibliotecaController --> "1" Biblioteca : "-biblioteca"
-
-Biblioteca o-- "*" Libro : "-libros"
-Biblioteca o-- "*" Usuario : "-usuarios"
-Biblioteca *-- "*" Prestamo : "-prestamos"
-
-Prestamo --> "1" Usuario : "-usuario"
-Prestamo --> "1" Libro : "-libro"
-
-note right of BibliotecaException: Extensión Sec. 16:\nManejo de Errores
+' Relaciones
+Main ..> BibliotecaVista : crea
+Main ..> BibliotecaController : crea
+BibliotecaController --> BibliotecaVista : usa
+BibliotecaController --> Biblioteca : gestiona
+Biblioteca "1" *-- "many" Libro : contiene
+Biblioteca "1" *-- "many" Usuario : registra
+Biblioteca "1" *-- "many" Prestamo : controla
+Prestamo --> Libro : asocia
+Prestamo --> Usuario : asocia
+Usuario ..> BibliotecaException : lanza (validación @)
 @enduml
