@@ -1,4 +1,6 @@
-@startuml
+### Diagrama UML (PlantUML)
+```plantuml
+[@startuml
 skinparam style strictuml
 skinparam packageStyle rectangle
 
@@ -71,4 +73,4 @@ Biblioteca "1" *-- "many" Prestamo : controla
 Prestamo --> Libro : asocia
 Prestamo --> Usuario : asocia
 Usuario ..> BibliotecaException : lanza (validación @)
-@enduml
+@enduml]
